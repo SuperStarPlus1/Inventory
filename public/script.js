@@ -41,15 +41,7 @@ const summary = {};
 window.onload = function () {
   const familySelect = document.getElementById("family");
   const itemSelect = document.getElementById("item");
-
-  // Create search input
-  const searchInput = document.createElement("input");
-  searchInput.type = "text";
-  searchInput.placeholder = "חפש לפי שם פריט...";
-  searchInput.style.marginTop = "10px";
-  searchInput.style.width = "100%";
-  searchInput.id = "searchInput";
-  itemSelect.parentNode.insertBefore(searchInput, itemSelect.nextSibling);
+  const searchInput = document.getElementById("searchInput");
 
   // Populate unique families
   const families = ["הכל", ...new Set(itemsData.map((item) => item.family))];
@@ -81,6 +73,7 @@ window.onload = function () {
       });
     }
   }
+
   familySelect.onchange = updateItemList;
   searchInput.oninput = updateItemList;
   familySelect.dispatchEvent(new Event("change"));
@@ -111,6 +104,10 @@ function addEntry() {
 }
 
 function updateTable() {
+  const now = new Date();
+  const timestamp = now.toLocaleString('he-IL');
+  document.getElementById("report-time").textContent = `עודכן לאחרונה: ${timestamp}`;
+
   const tbody = document.querySelector("#summary tbody");
   tbody.innerHTML = "";
 
@@ -123,4 +120,28 @@ function updateTable() {
     `;
     tbody.appendChild(row);
   }
+}
+
+function sendReportByEmail() {
+  const now = new Date();
+  const timestamp = now.toLocaleString('he-IL');
+  const rows = Object.entries(summary).map(([code, { name, net }]) => ({ code, name, net }));
+
+  fetch("/api/send-report", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      timestamp,
+      items: rows,
+      to: "ashraf@khader.co.il"
+    })
+  })
+  .then(res => {
+    if (!res.ok) throw new Error("שליחה נכשלה");
+    alert("הדוח נשלח למייל בהצלחה ✅");
+  })
+  .catch(err => {
+    console.error(err);
+    alert("שגיאה בשליחת הדוח ❌");
+  });
 }
