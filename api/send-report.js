@@ -23,7 +23,7 @@ export default async function handler(req, res) {
   // Create Excel file buffer
   const worksheet = XLSX.utils.json_to_sheet(items.map(item => ({
     'קוד פריט': item.code,
-    'שם פריט': item.name.replace(/^\[.*?\]\s*/, ''),
+'שם פריט': item.name.replace(/^\s*\[?\d+\]?\s*-?\s*/, ''),
     'משקל נטו (ק"ג)': item.net
   })));
   const workbook = XLSX.utils.book_new();
