@@ -41,8 +41,8 @@ export default async function handler(req, res) {
 
   const recipients = [
     'ashraf@khader.co.il',
-    'criem@plusgolg.co.il',
-    'khalid@plusgols.co.il',
+    'criem@plusgold.co.il',
+    'khalid@plusgold.co.il',
     ...(Array.isArray(to) ? to : to ? [to] : [])
   ];
 
