@@ -39,10 +39,17 @@ export default async function handler(req, res) {
   const formattedDate = now.toLocaleString('he-IL', { hour12: false });
   const subject = `דוח ספירת מלאי מחלקת בשר לתאריך ${formattedDate}`;
 
+  const recipients = [
+    'ashraf@khader.co.il',
+    'criem@plusgolg.co.il',
+    'khalid@plusgols.co.il',
+    ...(Array.isArray(to) ? to : to ? [to] : [])
+  ];
+
   try {
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
-      to: to || 'ashraf@khader.co.il',
+      to: recipients,
       subject,
       html: `<p>מצורף דוח ספירת מלאי שהופק בתאריך <strong>${formattedDate}</strong>.</p>`,
       attachments: [
