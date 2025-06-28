@@ -192,21 +192,11 @@ window.onload = function () {
     familySelect.appendChild(opt);
   });
 
-  function updateItemList() {
-    const selectedFamily = familySelect.value;
-    const searchTerm = searchInput.value.trim();
-    itemSelect.innerHTML = "";
-    const filtered = itemsData.filter((item) =>
-      item.family === selectedFamily &&
-      (item.name.includes(searchTerm) || item.code.toString().includes(searchTerm))
-    );
-    filtered.forEach((item) => {
-      const opt = document.createElement("option");
-      opt.value = item.code;
-      opt.textContent = `${item.name} (${item.code})`;
-      itemSelect.appendChild(opt);
-    });
-  };
+  $1
+  familySelect.onchange = updateItemList;
+  searchInput.oninput = updateItemList;
+  familySelect.dispatchEvent(new Event("change"));
+};
 
 function addEntry() {
   const itemCode = document.getElementById("item").value;
