@@ -192,7 +192,27 @@ window.onload = function () {
     familySelect.appendChild(opt);
   });
 
-  $1
+  function updateItemList() {
+    const selectedFamily = familySelect.value;
+    const searchTerm = searchInput.value.trim().toLowerCase();
+    itemSelect.innerHTML = "";
+    const filtered = itemsData.filter((item) =>
+      item.family === selectedFamily &&
+      (item.name.toLowerCase().includes(searchTerm) || item.code.toString().includes(searchTerm))
+    );
+    if (filtered.length === 0) {
+      const opt = document.createElement("option");
+      opt.textContent = "לא נמצאו תוצאות";
+      itemSelect.appendChild(opt);
+    } else {
+      filtered.forEach((item) => {
+        const opt = document.createElement("option");
+        opt.value = item.code;
+        opt.textContent = `${item.name} (${item.code})`;
+        itemSelect.appendChild(opt);
+      });
+    }
+  }
   familySelect.onchange = updateItemList;
   searchInput.oninput = updateItemList;
   familySelect.dispatchEvent(new Event("change"));
