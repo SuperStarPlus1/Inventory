@@ -18,7 +18,7 @@
       display: block;
       margin-top: 10px;
     }
-    select, input[type="number"] {
+    select, input[type="number"], input[type="text"] {
       width: 100%;
       padding: 8px;
       margin-top: 5px;
@@ -43,6 +43,11 @@
     th {
       background-color: #eee;
     }
+    #report-time {
+      margin-top: 20px;
+      font-weight: bold;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
@@ -54,16 +59,22 @@
   <label for="item">בחר פריט:</label>
   <select id="item"></select>
 
+  <label for="searchInput">חפש לפי שם או קוד:</label>
+  <input type="text" id="searchInput" placeholder="הקלד שם או קוד פריט..." />
+
   <label for="gross">משקל ברוטו (ק"ג):</label>
   <input type="number" id="gross" step="0.01" />
 
   <label for="hooks">מספר קולבים:</label>
-  <input type="number" id="hooks" step="1" min="0" value="0" />
+  <input type="number" id="hooks" step="1" min="0" />
 
   <label for="boxes">מספר ארגזים:</label>
-  <input type="number" id="boxes" step="1" min="0" value="0" />
+  <input type="number" id="boxes" step="1" min="0" />
 
   <button onclick="addEntry()">חשב והוסף לטבלה</button>
+  <button onclick="sendReportByEmail()">שלח דוח למייל</button>
+
+  <p id="report-time"></p>
 
   <table id="summary">
     <thead>
