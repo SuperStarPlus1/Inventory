@@ -1,10 +1,10 @@
 {
   "name": "meat-inventory-counter",
   "version": "1.0.0",
-  "description": "מערכת ספירת מלאי למחלקת בשר כולל שליחה במייל",
+  "description": "מערכת ספירת מלאי למחלקת בשר כולל שליחת דוח Excel עם לוגו",
+  "type": "module",
   "dependencies": {
     "nodemailer": "^6.9.0",
-    "xlsx": "^0.18.5"
     "exceljs": "^4.3.0"
   }
 }
