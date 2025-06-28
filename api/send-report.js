@@ -1,7 +1,5 @@
 import nodemailer from 'nodemailer';
 import ExcelJS from 'exceljs';
-import fs from 'fs';
-import path from 'path';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -22,22 +20,9 @@ export default async function handler(req, res) {
     },
   });
 
-  // Create Excel file with logo using ExcelJS
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet('דוח מלאי');
 
-  // Add logo image to the workbook
-  const logoPath = path.join(process.cwd(), 'logo.png');
-  const logoImage = workbook.addImage({
-    filename: logoPath,
-    extension: 'png'
-  });
-  worksheet.addImage(logoImage, {
-    tl: { col: 0, row: 0 },
-    ext: { width: 200, height: 100 }
-  });
-
-  worksheet.addRow([]); // spacing after image
   worksheet.addRow(['קוד פריט', 'שם פריט', 'משקל נטו (ק"ג)']);
 
   items.forEach(item => {
