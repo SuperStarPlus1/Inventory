@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer';
+import XLSX from 'xlsx';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -19,32 +20,33 @@ export default async function handler(req, res) {
     },
   });
 
-  const tableHtml = items.map(item =>
-    `<tr><td>${item.code}</td><td>${item.name}</td><td>${item.net} ק"ג</td></tr>`
-  ).join('');
+  // Create Excel file buffer
+  const worksheet = XLSX.utils.json_to_sheet(items.map(item => ({
+    'קוד פריט': item.code,
+    'שם פריט': item.name,
+    'משקל נטו (ק"ג)': item.net
+  })));
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'דוח מלאי');
+  const excelBuffer = XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' });
 
-  const htmlBody = `
-    <h2>דוח ספירת מלאי - ${timestamp}</h2>
-    <table border="1" cellpadding="8" cellspacing="0">
-      <thead>
-        <tr>
-          <th>קוד פריט</th>
-          <th>שם פריט</th>
-          <th>משקל נטו מצטבר</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${tableHtml}
-      </tbody>
-    </table>
-  `;
+  const now = new Date();
+  const formattedDate = now.toLocaleString('he-IL', { hour12: false });
+  const subject = `דוח ספירת מלאי מחלקת בשר לתאריך ${formattedDate}`;
 
   try {
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: to || 'ashraf@khader.co.il',
-      subject: `📦 דוח ספירת מלאי - ${timestamp}`,
-      html: htmlBody
+      subject,
+      html: `<p>מצורף דוח ספירת מלאי שהופק בתאריך <strong>${formattedDate}</strong>.</p>`,
+      attachments: [
+        {
+          filename: `report-${formattedDate.replace(/[: ]/g, '_')}.xlsx`,
+          content: excelBuffer,
+          contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        }
+      ]
     });
 
     res.status(200).json({ success: true });
