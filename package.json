@@ -2,16 +2,7 @@
   "name": "meat-inventory-counter",
   "version": "1.0.0",
   "description": "מערכת ספירת מלאי למחלקת בשר כולל שליחה במייל",
-  "main": "index.js",
-  "scripts": {
-    "dev": "vercel dev",
-    "build": "vercel build",
-    "start": "vercel start"
-  },
   "dependencies": {
     "nodemailer": "^6.9.0"
-  },
-  "keywords": ["inventory", "meat", "vercel", "email"],
-  "author": "Ashraf",
-  "license": "MIT"
+  }
 }
