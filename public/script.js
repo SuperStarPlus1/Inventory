@@ -90,8 +90,8 @@ function addEntry() {
   const itemCode = document.getElementById("item").value;
   const itemName = document.getElementById("item").selectedOptions[0].text;
   const gross = parseFloat(document.getElementById("gross").value);
-  const hooks = parseInt(document.getElementById("hooks").value);
-  const boxes = parseInt(document.getElementById("boxes").value);
+  const hooks = parseInt(document.getElementById("hooks").value) || 0;
+  const boxes = parseInt(document.getElementById("boxes").value) || 0;
 
   if (isNaN(gross)) return alert("יש להזין משקל ברוטו תקין.");
 
@@ -106,8 +106,8 @@ function addEntry() {
   updateTable();
 
   document.getElementById("gross").value = "";
-  document.getElementById("hooks").value = 0;
-  document.getElementById("boxes").value = 0;
+  document.getElementById("hooks").value = "";
+  document.getElementById("boxes").value = "";
 }
 
 function updateTable() {
