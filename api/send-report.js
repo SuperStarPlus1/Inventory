@@ -1,5 +1,7 @@
 import nodemailer from 'nodemailer';
-import XLSX from 'xlsx';
+import ExcelJS from 'exceljs';
+import fs from 'fs';
+import path from 'path';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -20,15 +22,33 @@ export default async function handler(req, res) {
     },
   });
 
-  // Create Excel file buffer
-  const worksheet = XLSX.utils.json_to_sheet(items.map(item => ({
-    'קוד פריט': item.code,
-'שם פריט': item.name.replace(/^(\[?\d{4,}\]?[\s-]*)/, '').trim(),
-    'משקל נטו (ק"ג)': item.net
-  })));
-  const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, 'דוח מלאי');
-  const excelBuffer = XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' });
+  // Create Excel file with logo using ExcelJS
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet('דוח מלאי');
+
+  // Add logo image to the workbook
+  const logoPath = path.join(process.cwd(), 'logo.png');
+  const logoImage = workbook.addImage({
+    filename: logoPath,
+    extension: 'png'
+  });
+  worksheet.addImage(logoImage, {
+    tl: { col: 0, row: 0 },
+    ext: { width: 200, height: 100 }
+  });
+
+  worksheet.addRow([]); // spacing after image
+  worksheet.addRow(['קוד פריט', 'שם פריט', 'משקל נטו (ק"ג)']);
+
+  items.forEach(item => {
+    worksheet.addRow([
+      item.code,
+      item.name.replace(/^\[.*?\]\s*/, ''),
+      item.net
+    ]);
+  });
+
+  const buffer = await workbook.xlsx.writeBuffer();
 
   const now = new Date();
   const formattedDate = now.toLocaleString('he-IL', { hour12: false });
@@ -43,7 +63,7 @@ export default async function handler(req, res) {
       attachments: [
         {
           filename: `report-${formattedDate.replace(/[: ]/g, '_')}.xlsx`,
-          content: excelBuffer,
+          content: buffer,
           contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         }
       ]
