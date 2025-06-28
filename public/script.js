@@ -52,7 +52,7 @@ window.onload = function () {
   itemSelect.parentNode.insertBefore(searchInput, itemSelect.nextSibling);
 
   // Populate unique families
-  const families = [...new Set(itemsData.map((item) => item.family))];
+  const families = ["הכל", ...new Set(itemsData.map((item) => item.family))];
   families.forEach((fam) => {
     const opt = document.createElement("option");
     opt.value = fam;
@@ -65,7 +65,7 @@ window.onload = function () {
     const searchTerm = searchInput.value.trim().toLowerCase();
     itemSelect.innerHTML = "";
     const filtered = itemsData.filter((item) =>
-      item.family === selectedFamily &&
+      (selectedFamily === "הכל" || item.family === selectedFamily) &&
       (item.name.toLowerCase().includes(searchTerm) || item.code.toString().includes(searchTerm))
     );
     if (filtered.length === 0) {
